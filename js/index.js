@@ -50,6 +50,7 @@ function showMovies(data) {
         console.error('Invalid data structure:', data);
         return;
     }
+    console.log(data);
 
     const moviesEl = document.querySelector(".movies");
     moviesEl.innerHTML = "";
@@ -65,7 +66,7 @@ function showReleases(data) {
         console.error('Invalid data structure:', data);
         return;
     }
-
+    console.log(data);
     const moviesEl = document.querySelector(".movies");
     moviesEl.innerHTML = "";
 
@@ -80,6 +81,8 @@ function showExpected(data) {
         console.error('Invalid data structure:', data);
         return;
     }
+    console.log(data);
+
 
     const moviesEl = document.querySelector(".movies");
     moviesEl.innerHTML = ""; 
@@ -93,17 +96,35 @@ function showExpected(data) {
 function createMovieElement(movie) {
     const movieEl = document.createElement("div");
     movieEl.classList.add("movie");
+    const rating = getRandomRating();
 
     movieEl.innerHTML = `
         <div class="movie__cover">
             <img class="movie__img" src="${movie.posterUrlPreview}" alt="${movie.nameRu}">
-            <div class="movie__rating">${movie.ratingKinopoisk != null ? movie.ratingKinopoisk : ''}</div>
         </div>
         <div class="movie__info">
             <div class="movie__title">${movie.nameRu}</div>
             <div class="movie__category">${movie.genres.map(genre => genre.genre).join(', ')}</div>
+            <div class="movie__rating ${getRatingColor(rating)}">${rating}</div>
         </div>
     `;
 
     return movieEl;
+}
+
+function getRandomRating() {
+    const min = 0.00;
+    const max = 10.00;
+    const decimals = 2;
+    const randomFloat = (Math.random() * (max - min) + min).toFixed(decimals);
+    return parseFloat(randomFloat);
+}
+
+function getRatingColor(rating) {
+    if(rating >= 7) {
+        return "green";
+    } else if(rating > 5) {
+        return "orange";
+    }
+    return "red"
 }

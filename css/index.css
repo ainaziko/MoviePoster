@@ -77,3 +77,30 @@ main {
 .movie__category {
     color: rgb(200, 200, 2);
 }
+
+.movie__rating {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    width: 40px;
+    height: 40px;
+    font-size: small;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #2b2932;
+    opacity: 0.9;
+}
+
+.red {
+    border: 2px solid rgb(186, 34, 34);
+}
+
+.orange {
+    border: 2px solid rgb(221, 108, 16);
+}
+
+.green {
+    border: 2px solid rgb(19, 157, 19);
+}
