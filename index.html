@@ -18,20 +18,23 @@
         <nav class="header__nav">
             <h1 class="header__title">Movie App</h1>
             <ul class="header__ul">
-                <li class="header__item">Премьеры месяца</li>
-                <li class="header__item">Топ ожидаемых</li>
-                <li class="header__item">Релизы месяца</li>
-                <li class="header__item">Топ лучшие</li>
-                <li class="header__item">Избранные</li>
+                <li class="header__item premieres">Премьеры месяца</li>
+                <li class="header__item expected">Топ ожидаемых</li>
+                <li class="header__item releases">Релизы месяца</li>
+                <li class="header__item popular">Топ лучшие</li>
+                <li class="header__item favorite">Избранные</li>
             </ul>
         </nav>
         <form class="header__form">
-            <input class="header__input" placeholder="Поиск">
+            <input class="header__input" type="text" placeholder="Поиск">
         </form>
     </header>
 
     <main>
-        <div class="content-container"></div>
+        <div class="movies"></div>
+        <div class="main__list">
+
+        </div>
     </main>
 
     <script src="./js/index.js"></script>
