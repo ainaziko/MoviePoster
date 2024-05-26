@@ -104,3 +104,9 @@ main {
 .green {
     border: 2px solid rgb(19, 157, 19);
 }
+
+.header__input {
+    padding-left: 0.7rem;
+    border-radius: 5px;
+    height: 35px;
+}
