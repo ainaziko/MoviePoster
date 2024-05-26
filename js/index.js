@@ -3,7 +3,8 @@ const API_URLS = {
     premieres: "https://kinopoiskapiunofficial.tech/api/v2.2/films/premieres?year=2024&month=MAY",
     popular: "https://kinopoiskapiunofficial.tech/api/v2.2/films/collections?type=TOP_POPULAR_ALL&page=1",
     releases: "https://kinopoiskapiunofficial.tech/api/v2.1/films/releases?year=2024&month=MAY&page=1",
-    expected: "https://kinopoiskapiunofficial.tech/api/v2.2/films/top?type=TOP_AWAIT_FILMS"
+    expected: "https://kinopoiskapiunofficial.tech/api/v2.2/films/top?type=TOP_AWAIT_FILMS",
+    search: "https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword?keyword=${input.value}page=1"
 };
 
 const navItems = {
@@ -13,7 +14,7 @@ const navItems = {
     popular: document.querySelector(".popular"),
     favorite: document.querySelector(".favorite"),
     logo: document.querySelector(".header__title"),
-    search: document.querySelector(".header__input")
+    input: document.querySelector(".header__input")
 };
 
 navItems.premieres.addEventListener("click", () => fetchMovies(API_URLS.premieres, showMovies));
@@ -21,7 +22,7 @@ navItems.expected.addEventListener("click", () => fetchMovies(API_URLS.expected,
 navItems.releases.addEventListener("click", () => fetchMovies(API_URLS.releases, showReleases));
 navItems.popular.addEventListener("click", () => fetchMovies(API_URLS.popular, showMovies));
 navItems.logo.addEventListener("click", () => fetchMovies(API_URLS.premieres, showMovies));
-
+navItems.input.addEventListener('input', handleSearch);
 
 fetchMovies(API_URLS.premieres, showMovies);
 
@@ -50,7 +51,6 @@ function showMovies(data) {
         console.error('Invalid data structure:', data);
         return;
     }
-    console.log(data);
 
     const moviesEl = document.querySelector(".movies");
     moviesEl.innerHTML = "";
@@ -66,7 +66,6 @@ function showReleases(data) {
         console.error('Invalid data structure:', data);
         return;
     }
-    console.log(data);
     const moviesEl = document.querySelector(".movies");
     moviesEl.innerHTML = "";
 
@@ -81,8 +80,6 @@ function showExpected(data) {
         console.error('Invalid data structure:', data);
         return;
     }
-    console.log(data);
-
 
     const moviesEl = document.querySelector(".movies");
     moviesEl.innerHTML = ""; 
@@ -101,11 +98,11 @@ function createMovieElement(movie) {
     movieEl.innerHTML = `
         <div class="movie__cover">
             <img class="movie__img" src="${movie.posterUrlPreview}" alt="${movie.nameRu}">
+            <div class="movie__rating ${getRatingColor(rating)}">${rating}</div>
         </div>
         <div class="movie__info">
             <div class="movie__title">${movie.nameRu}</div>
             <div class="movie__category">${movie.genres.map(genre => genre.genre).join(', ')}</div>
-            <div class="movie__rating ${getRatingColor(rating)}">${rating}</div>
         </div>
     `;
 
@@ -127,4 +124,18 @@ function getRatingColor(rating) {
         return "orange";
     }
     return "red"
+}
+
+function handleSearch(event) {
+    event.preventDefault();
+    const searchInput = navItems.input;
+    const searchTerm = searchInput.value.trim();
+
+    if (searchTerm === "") {
+        return;
+    }
+
+    const url = `https://kinopoiskapiunofficial.tech/api/v2.2/films?keyword=${searchTerm}`;
+
+    fetchMovies(url, showMovies);
 }
