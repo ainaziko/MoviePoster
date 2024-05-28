@@ -126,4 +126,7 @@ main {
     padding-left: 0.7rem;
     border-radius: 5px;
     height: 35px;
+    background-color: #28262f;
+    color: #FFFFFF;
+    border: solid 1px #635d77;
 }
