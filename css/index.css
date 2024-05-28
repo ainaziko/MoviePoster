@@ -31,6 +31,12 @@ header {
     color: #FFFFFF;
 }
 
+.header__item:hover {
+    border-radius: 50px;
+    color: #b4a5f0;
+    cursor: pointer;
+}
+
 .header__title {
     min-width: 150px;
     margin-left: 2rem;
@@ -126,4 +132,7 @@ main {
     padding-left: 0.7rem;
     border-radius: 5px;
     height: 35px;
+    background-color: #28262f;
+    color: #FFFFFF;
+    border: solid 1px #635d77;
 }
