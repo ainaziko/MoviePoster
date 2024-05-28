@@ -59,6 +59,7 @@ function showMovies(data) {
         const movieEl = createMovieElement(movie);
         moviesEl.appendChild(movieEl);
     });
+    updateLikedMovies();
 }
 
 function showReleases(data) {
@@ -70,9 +71,10 @@ function showReleases(data) {
     moviesEl.innerHTML = "";
 
     data.releases.forEach((movie) => {
-        const movieEl = createMovieElement(movie);
+        const movieEl = createMovieElementReleaseExpected(movie);
         moviesEl.appendChild(movieEl);
     });
+    updateLikedMoviesV2();
 }
 
 function showExpected(data) {
@@ -85,9 +87,10 @@ function showExpected(data) {
     moviesEl.innerHTML = ""; 
 
     data.films.forEach((movie) => {
-        const movieEl = createMovieElement(movie);
+        const movieEl = createMovieElementReleaseExpected(movie);
         moviesEl.appendChild(movieEl);
     });
+    updateLikedMoviesV2();
 }
 
 function createMovieElement(movie) {
@@ -96,18 +99,110 @@ function createMovieElement(movie) {
     const rating = getRandomRating();
 
     movieEl.innerHTML = `
-        <div class="movie__cover">
-            <img class="movie__img" src="${movie.posterUrlPreview}" alt="${movie.nameRu}">
-            <div class="movie__rating ${getRatingColor(rating)}">${rating}</div>
-        </div>
-        <div class="movie__info">
-            <div class="movie__title">${movie.nameRu}</div>
-            <div class="movie__category">${movie.genres.map(genre => genre.genre).join(', ')}</div>
+        <div class="movie-poster">
+            <div class="movie-poster__presentation">
+                <img class="movie__img" src="${movie.posterUrlPreview}" alt="${movie.nameRu}">
+                <div class="movie__rating ${getRatingColor(rating)}">${rating}</div>
+            </div>
+            <div class="movie-poster__additional-info">
+                <div class="txt-info">
+                    <div class="movie__title">${movie.nameRu}</div>
+                    <div class="movie__category">${movie.genres.map(genre => genre.genre).join(', ')}</div>
+                </div>
+                <div class="like-info">
+                    <button class="like-btn" data-movie-id="${movie.kinopoiskId}" onclick="toggleMovieLike(this)">
+                        <i class="fa-solid fa-heart fa-xl" style="color: #FFFFFF;"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     `;
 
     return movieEl;
 }
+
+function createMovieElementReleaseExpected(movie) {
+    const movieEl = document.createElement("div");
+    movieEl.classList.add("movie");
+    const rating = getRandomRating();
+
+    movieEl.innerHTML = `
+        <div class="movie-poster">
+            <div class="movie-poster__presentation">
+                <img class="movie__img" src="${movie.posterUrlPreview}" alt="${movie.nameRu}">
+                <div class="movie__rating ${getRatingColor(rating)}">${rating}</div>
+            </div>
+            <div class="movie-poster__additional-info">
+                <div class="txt-info">
+                    <div class="movie__title">${movie.nameRu}</div>
+                    <div class="movie__category">${movie.genres.map(genre => genre.genre).join(', ')}</div>
+                </div>
+                <div class="like-info">
+                    <button class="like-btn" data-movie-id-v2="${movie.filmId}" onclick="toggleMovieLikeV2(this)">
+                        <i class="fa-solid fa-heart fa-xl" style="color: #FFFFFF;"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    return movieEl;
+}
+
+function toggleMovieLike(currLikeBtn) {
+    const movieId = currLikeBtn.getAttribute('data-movie-id');
+    let likedMovies = JSON.parse(localStorage.getItem('likedMovies')) || [];
+
+    if (likedMovies.includes(movieId)) {
+        likedMovies = likedMovies.filter(id => id !== movieId);
+        currLikeBtn.querySelector('i').style.color = "#FFFFFF";
+    } else {
+        likedMovies.push(movieId);
+        currLikeBtn.querySelector('i').style.color = "#FF0000";
+    }
+
+    localStorage.setItem('likedMovies', JSON.stringify(likedMovies));
+}
+
+function updateLikedMovies() {
+    const likedMovies = JSON.parse(localStorage.getItem('likedMovies')) || [];
+    const likeButtons = document.querySelectorAll('.like-btn');
+
+    likeButtons.forEach(button => {
+        const movieId = button.getAttribute('data-movie-id');
+        if (likedMovies.includes(movieId)) {
+            button.querySelector('i').style.color = "#FF0000";
+        }
+    });
+}
+
+function toggleMovieLikeV2(currLikeBtn) {
+    const movieId = currLikeBtn.getAttribute('data-movie-id-v2');
+    let likedMovies = JSON.parse(localStorage.getItem('likedMoviesV2')) || [];
+
+    if (likedMovies.includes(movieId)) {
+        likedMovies = likedMovies.filter(id => id !== movieId);
+        currLikeBtn.querySelector('i').style.color = "#FFFFFF";
+    } else {
+        likedMovies.push(movieId);
+        currLikeBtn.querySelector('i').style.color = "#FF0000";
+    }
+
+    localStorage.setItem('likedMoviesV2', JSON.stringify(likedMovies));
+}
+
+function updateLikedMoviesV2() {
+    const likedMovies = JSON.parse(localStorage.getItem('likedMoviesV2')) || [];
+    const likeButtons = document.querySelectorAll('.like-btn');
+
+    likeButtons.forEach(button => {
+        const movieId = button.getAttribute('data-movie-id-v2');
+        if (likedMovies.includes(movieId)) {
+            button.querySelector('i').style.color = "#FF0000";
+        }
+    });
+}
+
 
 function getRandomRating() {
     const min = 0.00;
@@ -118,12 +213,12 @@ function getRandomRating() {
 }
 
 function getRatingColor(rating) {
-    if(rating >= 7) {
+    if (rating >= 7) {
         return "green";
-    } else if(rating > 5) {
+    } else if (rating > 5) {
         return "orange";
     }
-    return "red"
+    return "red";
 }
 
 function handleSearch(event) {
