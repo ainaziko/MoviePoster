@@ -70,12 +70,29 @@ main {
     position: relative;
 }
 
+.movie-poster__additional-info{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
 .movie__title, .movie__rating {
     color: white;
 }
 
+.movie__title {
+    padding-top: 0.5rem;
+}
+
 .movie__category {
     color: rgb(200, 200, 2);
+}
+
+.like-btn{
+    padding-top: 0.6rem;
+    padding-right: 0.3rem;
+    border: none;
+    background-color: #1a191e;
 }
 
 .movie__rating {
