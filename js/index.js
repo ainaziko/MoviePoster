@@ -1,10 +1,12 @@
-const API_KEY = "5d603114-fdf5-45a8-bc1d-7aab3eb3955c";
+
+const API_KEY = "d972ddb6-12d3-468d-996c-5a1a019fb8a9";
 const API_URLS = {
     premieres: "https://kinopoiskapiunofficial.tech/api/v2.2/films/premieres?year=2024&month=MAY",
     popular: "https://kinopoiskapiunofficial.tech/api/v2.2/films/collections?type=TOP_POPULAR_ALL&page=1",
     releases: "https://kinopoiskapiunofficial.tech/api/v2.1/films/releases?year=2024&month=MAY&page=1",
     expected: "https://kinopoiskapiunofficial.tech/api/v2.2/films/top?type=TOP_AWAIT_FILMS",
-    search: "https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword?keyword=${input.value}page=1"
+    search: "https://kinopoiskapiunofficial.tech/api/v2.1/films/search-by-keyword?keyword=${input.value}page=1",
+    favorites: "https://kinopoiskapiunofficial.tech/api/v2.2/films/{id}"
 };
 
 const navItems = {
@@ -23,6 +25,7 @@ navItems.releases.addEventListener("click", () => fetchMovies(API_URLS.releases,
 navItems.popular.addEventListener("click", () => fetchMovies(API_URLS.popular, showMovies));
 navItems.logo.addEventListener("click", () => fetchMovies(API_URLS.premieres, showMovies));
 navItems.input.addEventListener('input', handleSearch);
+navItems.favorite.addEventListener("click", () => fetchFavorites());
 
 fetchMovies(API_URLS.premieres, showMovies);
 
@@ -46,6 +49,45 @@ async function fetchMovies(url, displayFunction) {
     }
 }
 
+async function fetchFavorites() {
+    let favoriteIds = JSON.parse(localStorage.getItem("likedMovies")) || [];
+    let favoriteIdsV2 = JSON.parse(localStorage.getItem("likedMoviesV2")) || [];
+    let allFavoriteIds = favoriteIds.concat(favoriteIdsV2);
+
+    
+    const moviesEl = document.querySelector(".movies");
+    moviesEl.innerHTML = "";
+    
+    for (let id of allFavoriteIds) {
+        try {
+            let response = await fetch(`https://kinopoiskapiunofficial.tech/api/v2.2/films/${id}`, {
+                headers: {
+                    'X-API-KEY': API_KEY,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            let movie = await response.json();
+            showMovie(movie);
+        
+        } catch (error) {
+            console.error('Error fetching movie:', error);
+        }
+    }
+}
+
+function showMovie(movie) {
+    console.log(movie);
+    const moviesEl = document.querySelector(".movies");
+
+    const movieEl = createMovieElement(movie, "#FF0000");
+    moviesEl.appendChild(movieEl);
+}
+
 function showMovies(data) {
     if (!data || !data.items) {
         console.error('Invalid data structure:', data);
@@ -56,7 +98,7 @@ function showMovies(data) {
     moviesEl.innerHTML = "";
 
     data.items.forEach((movie) => {
-        const movieEl = createMovieElement(movie);
+        const movieEl = createMovieElement(movie, "#FFFFFF");
         moviesEl.appendChild(movieEl);
     });
     updateLikedMovies();
@@ -71,7 +113,7 @@ function showReleases(data) {
     moviesEl.innerHTML = "";
 
     data.releases.forEach((movie) => {
-        const movieEl = createMovieElementReleaseExpected(movie);
+        const movieEl = createMovieElementReleaseExpected(movie, "#FFFFFF");
         moviesEl.appendChild(movieEl);
     });
     updateLikedMoviesV2();
@@ -87,13 +129,13 @@ function showExpected(data) {
     moviesEl.innerHTML = ""; 
 
     data.films.forEach((movie) => {
-        const movieEl = createMovieElementReleaseExpected(movie);
+        const movieEl = createMovieElementReleaseExpected(movie, "#FFFFFF");
         moviesEl.appendChild(movieEl);
     });
     updateLikedMoviesV2();
 }
 
-function createMovieElement(movie) {
+function createMovieElement(movie, likeBtnColor) {
     const movieEl = document.createElement("div");
     movieEl.classList.add("movie");
     const rating = getRandomRating();
@@ -111,7 +153,7 @@ function createMovieElement(movie) {
                 </div>
                 <div class="like-info">
                     <button class="like-btn" data-movie-id="${movie.kinopoiskId}" onclick="toggleMovieLike(this)">
-                        <i class="fa-solid fa-heart fa-xl" style="color: #FFFFFF;"></i>
+                        <i class="fa-solid fa-heart fa-xl" style="color: ${likeBtnColor};"></i>
                     </button>
                 </div>
             </div>
@@ -157,7 +199,7 @@ function toggleMovieLike(currLikeBtn) {
         likedMovies = likedMovies.filter(id => id !== movieId);
         currLikeBtn.querySelector('i').style.color = "#FFFFFF";
     } else {
-        likedMovies.push(movieId);
+        likedMovies.unshift(movieId);
         currLikeBtn.querySelector('i').style.color = "#FF0000";
     }
 
@@ -184,7 +226,7 @@ function toggleMovieLikeV2(currLikeBtn) {
         likedMovies = likedMovies.filter(id => id !== movieId);
         currLikeBtn.querySelector('i').style.color = "#FFFFFF";
     } else {
-        likedMovies.push(movieId);
+        likedMovies.unshift(movieId);
         currLikeBtn.querySelector('i').style.color = "#FF0000";
     }
 
